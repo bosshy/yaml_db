@@ -18,6 +18,12 @@ RSpec.describe SerializationHelper::Dump do
     expect(SerializationHelper::Dump.table_column_names('mytable')).to eq([ 'a', 'b' ])
   end
 
+  it "excludes columns from dump if specified" do
+    stub_const('ENV', 'excluded_columns' => '  a, c ')
+    expect(SerializationHelper::Dump.excluded_columns).to eq([ 'a', 'c' ])
+    expect(SerializationHelper::Dump.table_column_names('mytable')).to eq([ 'b' ])
+  end
+
   it "returns a list of tables without the rails schema table" do
     expect(SerializationHelper::Dump.tables).to eq(['mytable'])
   end

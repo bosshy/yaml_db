@@ -169,7 +169,7 @@ module SerializationHelper
     end
 
     def self.table_column_names(table)
-      ActiveRecord::Base.connection.columns(table).map { |c| c.name }
+      ActiveRecord::Base.connection.columns(table).map { |c| c.name }.delete_if { |name| excluded_columns.include?(name)}
     end
 
 
@@ -190,6 +190,10 @@ module SerializationHelper
 
     def self.table_record_count(table)
       ActiveRecord::Base.connection.select_one("SELECT COUNT(*) FROM #{SerializationHelper::Utils.quote_table(table)}").values.first.to_i
+    end
+
+    def self.excluded_columns
+      ENV['excluded_columns'] ? ENV['excluded_columns'].split(',').map(&:strip) : []
     end
 
   end
